@@ -1,18 +1,12 @@
 # Installation Instructions
 
 ```shell
-puthon3 -m venv venv
-source venv/bin/activate  
+conda env create -f environment.yml
+conda activate ./akssora
 ```
 
-## Text Embeddings Installation Guide
+## Installation Guide
 
 ```shell
-pip install sentence-transformers faiss-cpu numpy
-```
-
-## Image Embeddings Installation Guide
-
-```shell
-pip install open_clip_torch torch torchvision pillow numpy
+pip install -r requirement.txt
 ```

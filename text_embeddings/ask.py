@@ -9,13 +9,11 @@ import faiss
 
 
 
-EMBEDDINGS_FILE = "text_embeddings/embeddings.txt"   
+EMBEDDINGS_FILE = "./embeddings.txt"   
 
 MODEL_NAME = "all-MiniLM-L6-v2"      
 
 TOP_K = 5                            
-
-
 
 
 def try_parse_json_line(line: str) -> Dict[str, Any]:

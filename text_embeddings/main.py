@@ -12,7 +12,7 @@ sentences = [
 
 vectors = model.encode(sentences)
 
-with open("text_embeddings/embeddings.txt", "w") as f:
+with open("./embeddings.txt", "w") as f:
     for text, vec in zip(sentences, vectors):
         record = {
             "text": text,

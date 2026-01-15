@@ -34,19 +34,19 @@ def embed_query(text):
     emb = emb / np.linalg.norm(emb)
     return emb
 
-def search_best_match(query, images):
+def search_best_matches(query, images, top_k=3):
     q = embed_query(query)
 
-    best_name = None
-    best_score = -999
+    scores = []
 
     for name, vec in images:
         score = np.dot(q, vec)
-        if score > best_score:
-            best_score = score
-            best_name = name
+        scores.append((name, score))
 
-    return best_name, best_score
+    # Sort by score (descending)
+    scores.sort(key=lambda x: x[1], reverse=True)
+
+    return scores[:top_k]
 
 
 def show_image(image_path):
@@ -59,7 +59,11 @@ if __name__ == "__main__":
 
     query = input("Ask a question: ")
 
-    best, score = search_best_match(query, images)
-    print("Best match:", best, "| score:", score)
+    top_matches = search_best_matches(query, images, top_k=3)
 
-    show_image(os.path.join(FRAMES_DIR, best))
+    for name, score in top_matches:
+        print("Match:", name, "| score:", score)
+        show_image(os.path.join(FRAMES_DIR, name))
+
+
+    # show_image(os.path.join(FRAMES_DIR, best))
