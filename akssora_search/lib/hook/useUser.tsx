@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { AUTH_URL } from "@/lib/constant";
 import api from "../api";
 
@@ -28,7 +27,6 @@ const useUser = () => {
 
         if (res.status !== 200) {
           console.error("Auth check failed with status", res.status);
-          window.location.href = "/";
           return;
         }
         const data = res.data.profile;
@@ -37,7 +35,6 @@ const useUser = () => {
         setUser(data);
       } catch (err) {
         console.error("Auth check failed", err);
-        window.location.href = "/";
       } finally {
         setLoading(false);
       }
