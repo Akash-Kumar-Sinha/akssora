@@ -1,5 +1,5 @@
 "use client";
-import { AUTH_URL } from "@/lib/constant";
+import { BACKEND_URL } from "@/lib/constant";
 import useUser from "@/lib/hook/useUser";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,13 +11,16 @@ export const Login = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleLogin = () => {
-    window.location.href = `${AUTH_URL}/oauth/google/login`;
+    window.location.href = `${BACKEND_URL}/auth/oauth/google/login`;
   };
 
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };

@@ -1,8 +1,8 @@
 import axios from "axios";
-import { AUTH_URL } from "./constant";
+import { BACKEND_URL } from "./constant";
 
 const api = axios.create({
-  baseURL: AUTH_URL,
+  baseURL: `${BACKEND_URL}/auth`,
   withCredentials: true,
 });
 
@@ -37,7 +37,7 @@ api.interceptors.response.use(
 
       try {
         await axios.post(
-          `${AUTH_URL}/oauth/refresh`,
+          `${BACKEND_URL}/auth/oauth/refresh`,
           {},
           { withCredentials: true },
         );

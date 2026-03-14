@@ -3,7 +3,6 @@ import mimetypes
 import json
 import base64
 import uuid
-import requests
 from botocore.exceptions import ClientError
 from concurrent.futures import ThreadPoolExecutor
 
@@ -24,6 +23,22 @@ from app.lib.file_name import file_name
 
 from app.lib.generate_text_embedding import generate_text_embedding
 
+
+def _resolve_image_format(content_type: str | None, file_path: str) -> str:
+    if content_type:
+        mime = content_type.lower().strip()
+    else:
+        mime = (mimetypes.guess_type(file_path)[0] or "image/png").lower()
+
+    mime_to_format = {
+        "image/png": "png",
+        "image/jpeg": "jpeg",
+        "image/jpg": "jpeg",
+        "image/webp": "webp",
+        "image/gif": "gif",
+    }
+    return mime_to_format.get(mime, "png")
+
 def upload_image_to_s3(image_path):
     try:
         object_key = os.path.basename(image_path)
@@ -35,12 +50,10 @@ def upload_image_to_s3(image_path):
             S3_BUCKET,
             s3_key,
             ExtraArgs={
-                "ACL": "public-read",
                 "ContentType": content_type or "image/png"}  
         )   
 
         image_url = f"https://{S3_BUCKET}.s3.amazonaws.com/{s3_key}"
-        print("Upload successful:", image_url)
 
         return image_url
 
@@ -54,10 +67,8 @@ def upload_image_to_s3(image_path):
 
 
 
-def generate_image_description(image_url: str) -> str:
-    """Use Nova Lite to generate a text description of the image."""
-    response = requests.get(image_url)
-    image_bytes = base64.b64encode(response.content).decode("utf-8")
+def generate_image_description(image_bytes: bytes, image_format: str) -> str:
+    encoded = base64.b64encode(image_bytes).decode("utf-8")
     result = client.invoke_model(
         body=json.dumps({
             "messages": [
@@ -66,12 +77,12 @@ def generate_image_description(image_url: str) -> str:
                     "content": [
                         {
                             "image": {
-                                "format": "png",
-                                "source": {"bytes": image_bytes}
+                                "format": image_format,
+                                "source": {"bytes": encoded}
                             }
                         },
                         {
-                            "text": "Describe this image in detail — objects, people, setting, colors, actions, composition. Be concise, max 3 sentences."
+                            "text": "Describe this image in detail - objects, people, setting, colors, actions, composition. Be concise, max 3 sentences."
                         }
                     ]
                 }
@@ -89,18 +100,16 @@ def generate_image_description(image_url: str) -> str:
     return body["output"]["message"]["content"][0]["text"].strip()
 
 
-def generate_image_embeddings(image_url: str):
-    """Generate visual embedding from image."""
-    response = requests.get(image_url)
-    image_bytes = base64.b64encode(response.content).decode("utf-8")
+def generate_image_embeddings(image_bytes: bytes, image_format: str):
+    encoded = base64.b64encode(image_bytes).decode("utf-8")
     request_body = {
         "taskType": "SINGLE_EMBEDDING",
         "singleEmbeddingParams": {
             "embeddingPurpose": "GENERIC_INDEX",
             "embeddingDimension": EMBEDDING_DIMENSION,
             "image": {
-                "format": "png",
-                "source": {"bytes": image_bytes}
+                "format": image_format,
+                "source": {"bytes": encoded}
             },
         },
     }
@@ -150,15 +159,20 @@ def upload_image(file):
         with open(file_location, "wb") as buffer:
             buffer.write(file.file.read())
 
+        with open(file_location, "rb") as source:
+            raw_image_bytes = source.read()
+
+        image_format = _resolve_image_format(file.content_type, file_location)
+
         image_url = upload_image_to_s3(file_location)
         if image_url is None:
-            print("Skipping image due to upload failure:", image_url)
+            print("[image] Skipping image due to upload failure")
             return
 
-        description = generate_image_description(image_url)
+        description = generate_image_description(raw_image_bytes, image_format)
 
         with ThreadPoolExecutor(max_workers=2) as executor:
-            visual_future = executor.submit(generate_image_embeddings, image_url)
+            visual_future = executor.submit(generate_image_embeddings, raw_image_bytes, image_format)
             text_future = executor.submit(generate_text_embedding, description)
             visual_embedding = visual_future.result()
             text_embedding = text_future.result()
@@ -169,5 +183,5 @@ def upload_image(file):
         return image_url
 
     except Exception as e:
-        print("Error processing the uploaded image:", e)
+        print("[image] Error processing uploaded image:", e)
         return None

@@ -1,6 +1,6 @@
 import os
 import uuid
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.content_handler.image import upload_image
 
 from app.lib.create_vector_bucket_and_index import create_vector_bucket_and_index
@@ -13,7 +13,9 @@ router = APIRouter(prefix="/upload")
 @router.post("/image")
 async def upload_image_handler(file: UploadFile = File(...)):
     create_vector_bucket_and_index()
-    upload_image(file)
+    image_url = upload_image(file)
+    if not image_url:
+        raise HTTPException(status_code=500, detail="Image processing failed")
     return {"type": "image", "message": "Image uploaded and processed successfully"}
 
 
@@ -29,10 +31,10 @@ async def upload_video_handler(file: UploadFile = File(...)):
 
         os.remove(file_location)
         if not urls:
-            return {"error": "Failed to upload video"}
+            raise HTTPException(status_code=500, detail="Failed to upload video")
 
     except Exception as e:
-        return None
+        raise HTTPException(status_code=500, detail="Video upload failed")
 
     job_id = str(uuid.uuid4())
 

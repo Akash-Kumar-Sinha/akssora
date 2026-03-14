@@ -6,15 +6,15 @@ import {
   NavbarButton,
 } from "@/components/ui/resizable-navbar";
 import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
-import { AUTH_URL } from "@/lib/constant";
 import useUser from "@/lib/hook/useUser";
 import { Logout } from "./Logout";
+import { BACKEND_URL } from "@/lib/constant";
 
 export const Header = () => {
   const { user } = useUser();
 
   const handleLogin = () => {
-    const auth = `${AUTH_URL}/oauth/google/login`;
+    const auth = `${BACKEND_URL}/auth/oauth/google/login`;
     window.location.href = auth;
   };
 

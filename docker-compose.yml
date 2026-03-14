@@ -1,10 +1,36 @@
-version: '3.8'
 services:
+  auth_service:
+    build: ./auth_service
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./auth_service/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - akssora-search-network
+
+  search_model_service:
+    build: ./search_model_service
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./search_model_service/.env
+    depends_on:
+      - auth_service
+      - kafka
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - akssora-search-network
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - akssora-search-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -19,13 +45,22 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - akssora-search-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports:
-      - "5173:8080"
+      - "5172:8080"
     environment:
+      DYNAMIC_CONFIG_ENABLED: "true"
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
     depends_on:
       - kafka
+    networks:
+      - akssora-search-network
+
+networks:
+  akssora-search-network:
+    driver: bridge

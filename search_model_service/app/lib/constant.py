@@ -1,20 +1,28 @@
-import boto3
+import os
 from dotenv import load_dotenv
 load_dotenv()
+import boto3
 
-MODEL_ID = "amazon.nova-2-multimodal-embeddings-v1:0"
-EMBEDDING_DIMENSION = 3072
 
-TEXT_EMBEDDING_MODEL_ID = "amazon.titan-embed-text-v2:0"
-TEXT_INDEX_NAME="text-embeddings"
-TEXT_EMBEDDING_DIMENSION = 1024
+def get_int_env(name: str) -> int:
+	value = os.getenv(name)
+	if value is None:
+		raise ValueError(f"Missing required environment variable: {name}")
+	return int(value)
 
-VECTOR_BUCKET = "my-vector-store"
-INDEX_NAME = "embeddings"
+MODEL_ID = os.getenv("MODEL_ID")
+EMBEDDING_DIMENSION = get_int_env("EMBEDDING_DIMENSION")
 
-REGION="ap-south-1"
+TEXT_EMBEDDING_MODEL_ID = os.getenv("TEXT_EMBEDDING_MODEL_ID")
+TEXT_INDEX_NAME= os.getenv("TEXT_INDEX_NAME")
+TEXT_EMBEDDING_DIMENSION = get_int_env("TEXT_EMBEDDING_DIMENSION")
 
-S3_BUCKET = "elasticbeanstalk-ap-south-1-140023393631"
+VECTOR_BUCKET = os.getenv("VECTOR_BUCKET")
+INDEX_NAME = os.getenv("INDEX_NAME")
+
+REGION=os.getenv("REGION")
+
+S3_BUCKET = os.getenv("S3_BUCKET") 
 
 S3_EMBEDDING_DESTINATION_URI = f"s3://{S3_BUCKET}/embeddings/"
 

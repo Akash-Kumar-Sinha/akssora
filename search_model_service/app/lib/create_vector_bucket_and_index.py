@@ -1,4 +1,4 @@
-from .constant import (
+from app.lib.constant import (
     TEXT_INDEX_NAME,
     VECTOR_BUCKET,
     INDEX_NAME,

@@ -17,10 +17,6 @@ RERANK_TOP_N = 30
 
 
 def expand_query_multi(query: str) -> list[str]:
-    """
-    Generate multiple visual descriptions + key concept queries from a single user query.
-    Returns a list of query strings to search in parallel.
-    """
     response = client.invoke_model(
         body=json.dumps({
             "messages": [
@@ -40,7 +36,7 @@ a. A rich visual scene description (lighting, colors, setting, action)
 Rules:
 - Each line is a standalone search query
 - Focus on what is VISUALLY present
-- No numbering, no labels, no bullet points — just 4 plain lines
+- No numbering, no labels, no bullet points - just 4 plain lines
 - Max 2 sentences per line
 
 User query: {query}"""
@@ -64,7 +60,6 @@ User query: {query}"""
 
 
 def generate_visual_query_embedding(text: str) -> list:
-    """Embed a query using Nova (matches visual index vectors)."""
     response = client.invoke_model(
         body=json.dumps({
             "taskType": "SINGLE_EMBEDDING",
@@ -86,7 +81,6 @@ def generate_visual_query_embedding(text: str) -> list:
 
 
 def query_visual_index(embedding: list, top_k: int = TOP_K_PER_QUERY) -> list:
-    """Query the visual index (Nova embeddings)."""
     response = s3vector_client.query_vectors(
         vectorBucketName=VECTOR_BUCKET,
         indexName=INDEX_NAME,
@@ -99,7 +93,6 @@ def query_visual_index(embedding: list, top_k: int = TOP_K_PER_QUERY) -> list:
 
 
 def query_text_index(embedding: list, top_k: int = TOP_K_PER_QUERY) -> list:
-    """Query the text index (Titan Text embeddings)."""
     response = s3vector_client.query_vectors(
         vectorBucketName=VECTOR_BUCKET,
         indexName=TEXT_INDEX_NAME,
@@ -112,10 +105,6 @@ def query_text_index(embedding: list, top_k: int = TOP_K_PER_QUERY) -> list:
 
 
 def reciprocal_rank_fusion(*result_lists, k: int = RRF_K) -> list:
-    """
-    Accepts any number of ranked result lists and merges via RRF.
-    Deduplicates on segment_id / image_id / vector key.
-    """
     def get_dedup_key(vector):
         meta = vector.get("metadata", {})
         return meta.get("segment_id") or meta.get("image_id") or vector.get("key", "")
@@ -135,10 +124,6 @@ def reciprocal_rank_fusion(*result_lists, k: int = RRF_K) -> list:
 
 
 def rerank_results(query: str, candidates: list) -> list:
-    """
-    Use Nova Lite to score each candidate against the original query.
-    Returns candidates sorted by rerank score descending.
-    """
     if not candidates:
         return candidates
 
@@ -191,7 +176,6 @@ No explanation, no markdown, just the JSON array."""
         if not isinstance(scores, list) or len(scores) != len(candidates):
             raise ValueError("Score count mismatch")
     except Exception as e:
-        print(f"[Rerank] Failed to parse scores: {e}, falling back to RRF order")
         return candidates
 
     reranked = [
@@ -199,7 +183,6 @@ No explanation, no markdown, just the JSON array."""
         for (vector, _), score in zip(candidates, scores)
     ]
     reranked.sort(key=lambda x: x[1], reverse=True)
-    print(f"[Rerank] top scores: {[round(s, 2) for _, s in reranked[:5]]}")
     return reranked
 
 

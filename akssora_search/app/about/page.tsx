@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────
-   Fade-in wrapper — triggers when element enters viewport
+   Fade-in wrapper - triggers when element enters viewport
 ───────────────────────────────────────────── */
 const FadeIn = ({
   children,
@@ -61,7 +61,9 @@ const FeatureCard = ({
         <Icon className="w-5 h-5 text-primary" />
       </div>
       <h3 className="text-sm font-semibold text-foreground mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        {description}
+      </p>
     </div>
   </FadeIn>
 );
@@ -88,7 +90,9 @@ const AudienceCard = ({
         </div>
         <h3 className="text-base font-semibold text-foreground">{title}</h3>
       </div>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        {description}
+      </p>
     </div>
   </FadeIn>
 );
@@ -113,7 +117,9 @@ const Step = ({
     </div>
     <div className="pt-1.5">
       <h4 className="text-sm font-semibold text-foreground mb-1">{title}</h4>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        {description}
+      </p>
     </div>
   </FadeIn>
 );
@@ -168,7 +174,7 @@ const AboutPage = () => {
           className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
         >
           Akssora Search is an AI-powered media search engine purpose-built for
-          podcasters and educators — making every frame, every word, and every
+          podcasters and educators - making every frame, every word, and every
           moment in your content library discoverable.
         </motion.p>
       </section>
@@ -191,12 +197,12 @@ const AboutPage = () => {
               A podcaster with 300 episodes cannot recall which conversation
               touched on a specific topic. An edtech platform with thousands of
               lecture recordings cannot surface the exact moment a concept was
-              explained. Traditional search fails here — it relies on tags,
+              explained. Traditional search fails here - it relies on tags,
               titles, and metadata that no one has time to maintain.
             </p>
             <p className="text-muted-foreground leading-relaxed max-w-3xl">
               Akssora Search eliminates that friction entirely. Type what you
-              remember seeing or hearing, and we find it — no tags, no manual
+              remember seeing or hearing, and we find it - no tags, no manual
               labelling, no guesswork.
             </p>
           </FadeIn>
@@ -220,7 +226,7 @@ const AboutPage = () => {
               <Step
                 number="01"
                 title="Upload your media"
-                description="Every image and video you upload is automatically processed — no manual configuration required."
+                description="Every image and video you upload is automatically processed - no manual configuration required."
                 delay={0.05}
               />
               <Step
@@ -238,7 +244,7 @@ const AboutPage = () => {
               <Step
                 number="04"
                 title="Results ranked by relevance"
-                description="Visual and text results are merged using Reciprocal Rank Fusion, then re-ranked by an AI relevance judge — surfacing the best match first."
+                description="Visual and text results are merged using Reciprocal Rank Fusion, then re-ranked by an AI relevance judge - surfacing the best match first."
                 delay={0.2}
               />
             </div>
@@ -247,10 +253,26 @@ const AboutPage = () => {
             <FadeIn delay={0.15}>
               <div className="rounded-3xl border border-border bg-muted/20 p-6 space-y-4">
                 {[
-                  { label: "Query", value: "man coming out of metro station", icon: Search },
-                  { label: "Visual Index", value: "Scene · Objects · Colors · Actions", icon: Layers },
-                  { label: "Text Index", value: "Transcripts · Descriptions", icon: Mic },
-                  { label: "RRF Merge + Rerank", value: "Best moments surfaced first", icon: BarChart3 },
+                  {
+                    label: "Query",
+                    value: "man coming out of metro station",
+                    icon: Search,
+                  },
+                  {
+                    label: "Visual Index",
+                    value: "Scene · Objects · Colors · Actions",
+                    icon: Layers,
+                  },
+                  {
+                    label: "Text Index",
+                    value: "Transcripts · Descriptions",
+                    icon: Mic,
+                  },
+                  {
+                    label: "RRF Merge + Rerank",
+                    value: "Best moments surfaced first",
+                    icon: BarChart3,
+                  },
                 ].map(({ label, value, icon: Icon }, i) => (
                   <div key={i}>
                     <div className="flex items-center gap-3 py-3 px-4 rounded-xl bg-background/60 border border-border">
@@ -259,7 +281,9 @@ const AboutPage = () => {
                         <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
                           {label}
                         </p>
-                        <p className="text-xs text-foreground font-medium">{value}</p>
+                        <p className="text-xs text-foreground font-medium">
+                          {value}
+                        </p>
                       </div>
                     </div>
                     {i < 3 && (
@@ -291,13 +315,13 @@ const AboutPage = () => {
             <FeatureCard
               icon={Search}
               title="Visual-first search"
-              description="Search by describing a scene — colors, objects, actions, settings. No filename required."
+              description="Search by describing a scene - colors, objects, actions, settings. No filename required."
               delay={0.05}
             />
             <FeatureCard
               icon={Clock}
               title="Moment-level precision"
-              description="We don't just find the right video — we find the right timestamp inside it. Every segment is independently indexed."
+              description="We don't just find the right video - we find the right timestamp inside it. Every segment is independently indexed."
               delay={0.1}
             />
             <FeatureCard
@@ -350,7 +374,7 @@ const AboutPage = () => {
             <AudienceCard
               icon={GraduationCap}
               title="EdTech Platforms"
-              description="Lecture libraries grow fast and become impossible to navigate. Akssora Search gives students and instructors the ability to search by concept, scene, or spoken phrase — surfacing the exact timestamp where a topic was covered, not just the video it might be in."
+              description="Lecture libraries grow fast and become impossible to navigate. Akssora Search gives students and instructors the ability to search by concept, scene, or spoken phrase - surfacing the exact timestamp where a topic was covered, not just the video it might be in."
               delay={0.1}
             />
           </div>
@@ -365,9 +389,9 @@ const AboutPage = () => {
               Our Mission
             </p>
             <blockquote className="text-2xl sm:text-3xl font-semibold text-foreground max-w-3xl mx-auto leading-snug mb-6">
-              "The value locked inside video content is massively
-              underutilised — not because the content isn't good, but because
-              it's invisible to search."
+              "The value locked inside video content is massively underutilised
+              - not because the content isn't good, but because it's invisible
+              to search."
             </blockquote>
             <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Akssora Search makes every frame, every word, and every moment in

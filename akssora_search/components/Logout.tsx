@@ -1,5 +1,5 @@
 "use client";
-import { AUTH_URL } from "@/lib/constant";
+import {  BACKEND_URL } from "@/lib/constant";
 import axios from "axios";
 import { LogOut } from "lucide-react";
 import React from "react";
@@ -8,7 +8,7 @@ export const Logout = () => {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        `${AUTH_URL}/logout`,
+        `${BACKEND_URL}/auth/logout`,
         {},
         { withCredentials: true },
       );

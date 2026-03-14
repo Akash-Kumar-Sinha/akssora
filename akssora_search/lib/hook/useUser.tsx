@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AUTH_URL } from "@/lib/constant";
+import { BACKEND_URL } from "@/lib/constant";
 import api from "../api";
 
 export type User = {
@@ -21,7 +21,7 @@ const useUser = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get(`${AUTH_URL}/me`, {
+        const res = await api.get(`${BACKEND_URL}/auth/me`, {
           withCredentials: true,
         });
 

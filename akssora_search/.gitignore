@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.env
 
 # testing
 /coverage
@@ -19,7 +20,6 @@
 
 # production
 /build
-.firebase
 
 # misc
 .DS_Store

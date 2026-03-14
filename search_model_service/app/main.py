@@ -5,13 +5,16 @@ from app.content_handler.routes import router as videos_router
 from app.search_handler.search import search
 from contextlib import asynccontextmanager
 from app.workers.consumer import consumer
+from app.workers.producer import ensure_topic
 import threading
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print("[startup] Ensuring Kafka topic exists")
+    ensure_topic()
     thread = threading.Thread(target=consumer, daemon=True)
     thread.start()
-    print("Kafka consumer started")
+    print("[startup] Kafka consumer started")
     yield
 
 app = FastAPI(lifespan=lifespan)

@@ -25,6 +25,7 @@ from app.lib.generate_text_embedding import generate_text_embedding
 
 def upload_video_to_s3(video_path):
     try:
+        print(f"[video] Uploading file to S3: {video_path}")
         object_key = os.path.basename(video_path)
         content_type, _ = mimetypes.guess_type(video_path)
 
@@ -35,7 +36,6 @@ def upload_video_to_s3(video_path):
             S3_BUCKET,
             s3_key,
             ExtraArgs={
-                "ACL": "public-read",
                 "ContentType": content_type or "video/mp4"
             }
         )
@@ -49,11 +49,11 @@ def upload_video_to_s3(video_path):
         }
 
     except ClientError as e:
-        print("S3 upload failed:", e)
+        print("[video] S3 upload failed:", e)
         return None
 
     except Exception as e:
-        print("Unexpected error:", e)
+        print("[video] Unexpected upload error:", e)
         return None
 
 def transcribe_video(video_path, job_name):
@@ -73,6 +73,7 @@ def transcribe_video(video_path, job_name):
         time.sleep(10)
 
     if status == "FAILED":
+        print(f"[video] Transcription job failed: {job_name}")
         return None
 
     transcript_uri = job["TranscriptionJob"]["Transcript"]["TranscriptFileUri"]
@@ -252,3 +253,4 @@ def save_video_embedding_to_vector_db(embeddings, s3_uri, url):
 def process_video(s3_uri, url):
     embeddings = generate_video_embedding(s3_uri)
     save_video_embedding_to_vector_db(embeddings, s3_uri, url)
+    print(f"[video] Processing completed")
