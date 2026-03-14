@@ -1,4 +1,18 @@
 services:
+  akssora_search:
+    build: ./akssora_search
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./akssora_search/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - auth_service
+      - search_model_service
+    networks:
+      - akssora-search-network
+
   auth_service:
     build: ./auth_service
     ports:
@@ -41,10 +55,13 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_LOG4J_LOGGERS: kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO
     networks:
       - akssora-search-network
 

@@ -1,14 +1,11 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+node_modules/
 
-.venv/
-venv/
-env/
+.next/
+out/
 
 .env
 .env.*
+!.env_example
 
 .git/
 .gitignore
@@ -19,4 +16,3 @@ Dockerfile
 *.log
 .DS_Store
 README.md
-bin/

@@ -1,5 +1,16 @@
 bin/
+*.exe
+*.test
+
+.env
+.env.*
 
 .git/
+.gitignore
 
-*.env
+Dockerfile
+.dockerignore
+
+*.log
+.DS_Store
+README.md
